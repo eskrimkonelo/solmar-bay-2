@@ -11,7 +11,7 @@
 // so nothing here depends on the time, the machine, or the order files
 // happen to be listed in.
 
-import { cpSync, existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildDossier } from './vendor/makefun-game.ts';
@@ -45,8 +45,8 @@ function copyTree(from: string, to: string): void {
 function handIn(): void {
   // Start from a clean output directory so a stale file from an earlier
   // run can never ride along into the entry.
-  rmSync(outputDir, { recursive: true, force: true });
   mkdirSync(outputDir, { recursive: true });
+  for (const e of readdirSync(outputDir)) rmSync(join(outputDir, e), { recursive: true, force: true });
 
   copyTree(gameSource, join(outputDir, 'game'));
 
