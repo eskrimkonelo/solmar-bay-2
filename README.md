@@ -1,8 +1,8 @@
 # Solmar Bay
 
 [![Make GTA 6](https://make.fun/badge/gta6-01.svg)](https://make.fun/c/gta6-01)
-[![Rank](https://make.fun/badge/gta6-01/eskrimkonelo/solmar-bay/rank.svg)](https://make.fun/c/gta6-01)
-[![Reward](https://make.fun/badge/gta6-01/eskrimkonelo/solmar-bay/reward.svg)](https://make.fun/c/gta6-01)
+[![Rank](https://make.fun/badge/gta6-01/eskrimkonelo/solmar-bay-2/rank.svg)](https://make.fun/c/gta6-01)
+[![Reward](https://make.fun/badge/gta6-01/eskrimkonelo/solmar-bay-2/reward.svg)](https://make.fun/c/gta6-01)
 
 An open-world crime game for the [Make GTA 6](https://make.fun/c/gta6-01) bounty on
 make.fun, built as plain static files that play offline in a desktop browser — no
