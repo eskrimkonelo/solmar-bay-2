@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solmar Bay — an open-world crime game</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #101820;
+    color: #f2ead8;
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  }
+  #game-wrap {
+    position: relative;
+    width: 1280px;
+    max-width: 100vw;
+    margin: 0 auto;
+  }
+  #game-canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: #2e7fb8;
+    cursor: crosshair;
+  }
+  #hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 12px 14px;
+    pointer-events: none;
+    font-size: 15px;
+  }
+  .hud-panel {
+    background: rgba(12, 18, 28, 0.72);
+    border: 1px solid rgba(242, 234, 216, 0.25);
+    border-radius: 8px;
+    padding: 8px 12px;
+  }
+  #health-panel { min-width: 220px; }
+  #health-bar {
+    width: 180px;
+    height: 12px;
+    background: #333;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+  #health-fill {
+    height: 100%;
+    width: 100%;
+    background: #6fd06f;
+    transition: width 0.15s linear;
+  }
+  #wanted-stars {
+    color: #ffd166;
+    font-size: 22px;
+    letter-spacing: 3px;
+  }
+  #mission-panel { max-width: 420px; text-align: center; }
+  #mission-label { color: #ffd166; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; }
+  #mission-text { margin-top: 2px; font-weight: 600; }
+  #speed-text { font-size: 20px; font-weight: 700; text-align: right; }
+  #minimap-wrap {
+    position: absolute;
+    right: 14px;
+    bottom: 14px;
+    border: 1px solid rgba(242, 234, 216, 0.35);
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgba(12, 18, 28, 0.72);
+  }
+  #minimap { display: block; width: 220px; height: 165px; }
+  #mute-button {
+    position: absolute;
+    left: 14px;
+    bottom: 14px;
+    pointer-events: auto;
+    background: rgba(12, 18, 28, 0.72);
+    color: #f2ead8;
+    border: 1px solid rgba(242, 234, 216, 0.35);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  #overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(8, 12, 20, 0.62);
+  }
+  #overlay.hidden { display: none; }
+  #overlay-card {
+    max-width: 560px;
+    margin: 20px;
+    background: rgba(12, 18, 28, 0.92);
+    border: 1px solid rgba(255, 209, 102, 0.5);
+    border-radius: 12px;
+    padding: 28px 32px;
+    text-align: center;
+  }
+  #overlay-title {
+    margin: 0 0 12px;
+    color: #ffd166;
+    font-size: 36px;
+    letter-spacing: 3px;
+  }
+  #overlay-body { font-size: 16px; line-height: 1.55; }
+  #overlay-button {
+    margin-top: 18px;
+    background: #ffd166;
+    color: #101820;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 28px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  #overlay-button:hover { background: #ffe08a; }
+  #below {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 10px 16px 24px;
+    color: #9aa8b8;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+<div id="game-wrap">
+  <canvas id="game-canvas" width="1280" height="720"></canvas>
+
+  <div id="hud">
+    <div class="hud-panel" id="health-panel">
+      <div>Health — <span id="health-text">100 HP</span></div>
+      <div id="health-bar"><div id="health-fill"></div></div>
+      <div style="margin-top:6px;">Money — <span id="money-text">$120</span></div>
+    </div>
+    <div class="hud-panel" id="mission-panel">
+      <div id="mission-label">Mission</div>
+      <div id="mission-text">Free roam — no active mission</div>
+      <div id="wanted-stars" title="Wanted level">☆☆☆☆☆</div>
+    </div>
+    <div class="hud-panel">
+      <div id="speed-text"></div>
+      <div style="color:#9aa8b8;">Solmar Bay</div>
+    </div>
+  </div>
+
+  <div id="minimap-wrap">
+    <canvas id="minimap" width="220" height="165"></canvas>
+  </div>
+
+  <button id="mute-button" type="button">Mute (M)</button>
+
+  <div id="overlay" class="hidden">
+    <div id="overlay-card">
+      <h1 id="overlay-title">SOLMAR BAY</h1>
+      <div id="overlay-body"></div>
+      <button id="overlay-button" type="button">Start</button>
+    </div>
+  </div>
+</div>
+
+<div id="below">
+  <strong>Solmar Bay</strong> — a top-down open-world crime game. Explore a sun-soaked coastal city
+  on foot and by car, steal cars, dodge the police, and work through six story missions.
+  Move with WASD or the arrow keys, aim with the mouse, click to shoot, E to enter or leave a car,
+  Shift to run, P or Escape to pause, M to mute.
+</div>
+
+<script src="src/config.js"></script>
+<script src="src/random.js"></script>
+<script src="src/input.js"></script>
+<script src="src/city.js"></script>
+<script src="src/world.js"></script>
+<script src="src/missions.js"></script>
+<script src="src/render.js"></script>
+<script src="src/audio.js"></script>
+<script src="src/shots.js"></script>
+<script src="src/main.js"></script>
+</body>
+</html>
